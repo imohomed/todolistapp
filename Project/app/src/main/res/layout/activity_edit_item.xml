@@ -26,10 +26,10 @@
         android:text="@string/save"
         android:onClick="onSaveItem"
         android:id="@+id/btnSave"
-        android:layout_marginTop="39dp"
-        android:layout_below="@+id/etTodoItem"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="122dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -38,6 +38,53 @@
         android:text="@string/edit_item"
         android:id="@+id/tvEditMessage"
         android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <RadioGroup
+        android:id="@+id/radioPriority"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/textView"
+        >
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="High"
+        android:id="@+id/rbHigh"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="false" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medium"
+        android:id="@+id/rbMedium"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="false" />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Normal"
+        android:id="@+id/rbNormal"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="true" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Priority:"
+        android:id="@+id/textView"
+        android:layout_below="@+id/etTodoItem"
+        android:layout_alignRight="@+id/tvEditMessage"
+        android:layout_alignEnd="@+id/tvEditMessage"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

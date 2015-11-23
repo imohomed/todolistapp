@@ -17,7 +17,7 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
     // Database Info
     private static TodoDatabaseHelper sInstance;
     private static final String DATABASE_NAME = "todoDatabase";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     // Table Names
     private static final String TABLE_ITEMS = "items";
@@ -25,7 +25,7 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
     // Item Table Columns
     private static final String KEY_ITEM_ID = "id";
     private static final String KEY_ITEM_TEXT = "text";
-
+    private static final String KEY_ITEM_PRIORITY = "priority";
 
     // Insert an item into the database
     public Item addItem(Item item) {
@@ -38,7 +38,7 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_ITEM_TEXT, item.text);
-
+            values.put(KEY_ITEM_PRIORITY, item.priority);
             // Notice how we haven't specified the primary key. SQLite auto increments the primary key column.
             item.id = db.insertOrThrow(TABLE_ITEMS, null, values);
             db.setTransactionSuccessful();
@@ -56,6 +56,7 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_ITEM_TEXT, item.text);
+        values.put(KEY_ITEM_PRIORITY, item.priority);
         return db.update(TABLE_ITEMS, values, KEY_ITEM_ID + " = ?",
                 new String[] { String.valueOf(item.id) });
     }
@@ -86,6 +87,7 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
                     Item newItem = new Item();
                     newItem.id = cursor.getInt(cursor.getColumnIndex(KEY_ITEM_ID));
                     newItem.text = cursor.getString(cursor.getColumnIndex(KEY_ITEM_TEXT));
+                    newItem.priority = cursor.getString(cursor.getColumnIndex(KEY_ITEM_PRIORITY));
                     items.add(newItem);
                 } while(cursor.moveToNext());
             }
@@ -118,7 +120,8 @@ public class TodoDatabaseHelper extends SQLiteOpenHelper {
         String CREATE_ITEMS_TABLE = "CREATE TABLE " + TABLE_ITEMS +
                 "(" +
                 KEY_ITEM_ID + " INTEGER PRIMARY KEY," + // Define a primary key
-                KEY_ITEM_TEXT + " TEXT" +
+                KEY_ITEM_TEXT + " TEXT," +
+                KEY_ITEM_PRIORITY + " TEXT" +
                 ")";
 
         db.execSQL(CREATE_ITEMS_TABLE);

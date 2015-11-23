@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,7 +15,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     ArrayList<Item> items;
-    ArrayAdapter<Item> itemsAdapter;
+    ItemsAdapter itemsAdapter;
+    //ArrayAdapter<Item> itemsAdapter;
     ListView lvItems;
     EditText etEditText;
     private final int REQUEST_CODE = 20;
@@ -53,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
         db = TodoDatabaseHelper.getInstance(this);
         items = db.getAllItems();
         //readItems();
-        itemsAdapter = new ArrayAdapter<Item>(this,android.R.layout.simple_list_item_1,items);
+        itemsAdapter = new ItemsAdapter(this, items);
+        //itemsAdapter = new ArrayAdapter<Item>(this,android.R.layout.simple_list_item_1,items);
         lvItems.setAdapter(itemsAdapter);
         /*
         items.add("Item #1");
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 i = new Intent(MainActivity.this, EditItemActivity.class);
                 i.putExtra("todoItemText",items.get(position).text);
                 i.putExtra("itemPosition",position);
+                i.putExtra("itemPriority",items.get(position).priority);
                 startActivityForResult(i,REQUEST_CODE);
             }
         });
@@ -97,8 +99,10 @@ public class MainActivity extends AppCompatActivity {
             // Extract name value from result extras
             String updatedText = data.getExtras().getString("updatedItem");
             int position = data.getExtras().getInt("itemPosition", 0);
+            String updatedPriority = data.getExtras().getString("itemPriority");
             Item updatedItem = items.get(position);
             updatedItem.text = updatedText;
+            updatedItem.priority = updatedPriority;
             items.set(position,updatedItem);
             db.updateItem(updatedItem);
 
