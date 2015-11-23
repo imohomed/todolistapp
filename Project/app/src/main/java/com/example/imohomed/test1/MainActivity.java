@@ -11,20 +11,18 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<String> items;
-    ArrayAdapter<String> itemsAdapter;
+    ArrayList<Item> items;
+    ArrayAdapter<Item> itemsAdapter;
     ListView lvItems;
     EditText etEditText;
     private final int REQUEST_CODE = 20;
+    private TodoDatabaseHelper db;
 
+    /*
     private void readItems(){
         File filesDir = getFilesDir();
         File file = new File(filesDir,"todo.txt");
@@ -43,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
             FileUtils.writeLines(file,items);
         }catch(IOException e){};
     }
+    */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +50,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         lvItems = (ListView) findViewById(R.id.lvItems);
         //items = new ArrayList<String>();
-        readItems();
-        itemsAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,items);
+        db = TodoDatabaseHelper.getInstance(this);
+        items = db.getAllItems();
+        //readItems();
+        itemsAdapter = new ArrayAdapter<Item>(this,android.R.layout.simple_list_item_1,items);
         lvItems.setAdapter(itemsAdapter);
         /*
         items.add("Item #1");
@@ -66,9 +67,10 @@ public class MainActivity extends AppCompatActivity {
         lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener(){
         public boolean onItemLongClick(AdapterView<?> parent,View view, int position, long id)
             {
-                items.remove(position);
+                Item removedItem = items.remove(position);
+                db.deleteItem(removedItem);
                 itemsAdapter.notifyDataSetChanged();
-                writeItems();
+                //writeItems();
                 return true;
             }
         });
@@ -81,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                 //startActivity(new Intent(this, EditItemActivity.class));
                 Intent i;
                 i = new Intent(MainActivity.this, EditItemActivity.class);
-                i.putExtra("todoItemText",items.get(position));
+                i.putExtra("todoItemText",items.get(position).text);
                 i.putExtra("itemPosition",position);
                 startActivityForResult(i,REQUEST_CODE);
             }
@@ -95,10 +97,14 @@ public class MainActivity extends AppCompatActivity {
             // Extract name value from result extras
             String updatedText = data.getExtras().getString("updatedItem");
             int position = data.getExtras().getInt("itemPosition", 0);
+            Item updatedItem = items.get(position);
+            updatedItem.text = updatedText;
+            items.set(position,updatedItem);
+            db.updateItem(updatedItem);
 
-            items.set(position,updatedText);
+            //items.set(position,updatedText);
             itemsAdapter.notifyDataSetChanged();
-            writeItems();
+            //writeItems();
             // Toast the name to display temporarily on screen
             Toast.makeText(this, "Item updated", Toast.LENGTH_SHORT).show();
 
@@ -106,8 +112,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onaddItem(View view) {
-        itemsAdapter.add(etEditText.getText().toString());
+        Item newItem = new Item();
+        newItem.text = etEditText.getText().toString();
+        newItem = db.addItem(newItem);
+        items.add(newItem);
+        itemsAdapter.notifyDataSetChanged();
+        //itemsAdapter.add();
         etEditText.setText("");
-        writeItems();
+        //writeItems();
     }
 }
